@@ -26,10 +26,13 @@ import ca.uhn.fhir.i18n.Msg;
 import ca.uhn.fhir.interceptor.api.Hook;
 import ca.uhn.fhir.interceptor.api.Pointcut;
 import ca.uhn.fhir.rest.api.Constants;
+import ca.uhn.fhir.rest.api.RestOperationTypeEnum;
 import ca.uhn.fhir.rest.server.IServerAddressStrategy;
 import ca.uhn.fhir.rest.server.IServerConformanceProvider;
+import ca.uhn.fhir.rest.server.ResourceBinding;
 import ca.uhn.fhir.rest.server.RestfulServer;
 import ca.uhn.fhir.rest.server.RestfulServerUtils;
+import ca.uhn.fhir.rest.server.method.BaseMethodBinding;
 import ca.uhn.fhir.rest.server.servlet.ServletRequestDetails;
 import ca.uhn.fhir.util.ClasspathUtil;
 import ca.uhn.fhir.util.ExtensionConstants;
@@ -90,6 +93,8 @@ import org.hl7.fhir.r4.model.Resource;
 import org.hl7.fhir.r4.model.StringType;
 import org.hl7.fhir.r4.model.Type;
 import org.hl7.fhir.r4.model.codesystems.DataTypes;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.thymeleaf.IEngineConfiguration;
 import org.thymeleaf.TemplateEngine;
 import org.thymeleaf.cache.AlwaysValidCacheEntryValidity;
@@ -110,6 +115,7 @@ import java.io.InputStream;
 import java.math.BigDecimal;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
@@ -128,6 +134,7 @@ import static org.apache.commons.lang3.StringUtils.isBlank;
 import static org.apache.commons.lang3.StringUtils.isNotBlank;
 
 public class OpenApiInterceptor {
+	private static final Logger ourLog = LoggerFactory.getLogger(OpenApiInterceptor.class);
 
 	public static final String FHIR_JSON_RESOURCE = "FHIR-JSON-RESOURCE";
 	public static final String FHIR_XML_RESOURCE = "FHIR-XML-RESOURCE";
@@ -442,6 +449,10 @@ public class OpenApiInterceptor {
 		return page;
 	}
 
+	protected void customizeOperation(Operation operation, BaseMethodBinding baseMethodBinding) {
+		// Here just to be overridden by extending classes.
+	}
+
 	protected OpenAPI generateOpenApi(ServletRequestDetails theRequestDetails) {
 		String page = extractPageName(theRequestDetails, null);
 
@@ -453,6 +464,9 @@ public class OpenApiInterceptor {
 		if (restfulServer.getServerConformanceProvider() instanceof IServerConformanceProvider) {
 			capabilitiesProvider = (IServerConformanceProvider<?>) restfulServer.getServerConformanceProvider();
 		}
+
+		final HashMap<String, HashMap<RestOperationTypeEnum, BaseMethodBinding>> operationLookup =
+				buildOperationLookup(restfulServer);
 
 		OpenAPI openApi = new OpenAPI();
 
@@ -473,6 +487,8 @@ public class OpenApiInterceptor {
 
 		Paths paths = new Paths();
 		openApi.setPaths(paths);
+
+		ensureComponentsSchemasPopulated(openApi);
 
 		if (page == null || page.equals(PAGE_SYSTEM) || page.equals(PAGE_ALL)) {
 			Tag serverTag = new Tag();
@@ -535,11 +551,41 @@ public class OpenApiInterceptor {
 
 			// Instance Read
 			if (typeRestfulInteractions.contains(CapabilityStatement.TypeRestfulInteraction.READ)) {
+				// String path = "/" + resourceType + "/{id}";
 				Operation operation = getPathItem(paths, "/" + resourceType + "/{id}", PathItem.HttpMethod.GET);
+
+				final BaseMethodBinding baseMethodBinding =
+						operationLookup.get(resourceType).get(RestOperationTypeEnum.READ);
+				final Class<?> returnClass = baseMethodBinding.getMethod().getReturnType();
+
+				String returnType = null;
+
+				try {
+					if (Resource.class.isAssignableFrom(returnClass)) {
+						//noinspection unchecked
+						Resource resourceInstance = ((Class<? extends Resource>) returnClass)
+								.getConstructor()
+								.newInstance();
+						returnType = resourceInstance.getResourceType().name();
+					} else {
+						ourLog.warn("returnType {} is not a Resource", returnClass);
+					}
+
+				} catch (Exception e) {
+					// do nothing
+					ourLog.warn("Error while processing return class: {}", returnClass);
+				}
+
+				ourLog.warn("return type detected for read: {}, resourceType: {}", returnClass, returnType);
+
+				// baseMethodBinding.getMethod().getAnnotations();
+
 				operation.addTagsItem(resourceType);
 				operation.setSummary("read-instance: Read " + resourceType + " instance");
 				addResourceIdParameter(operation);
-				addFhirResourceResponse(ctx, openApi, operation, null);
+				addFhirResourceResponse(ctx, openApi, operation, "Appointment");
+
+				customizeOperation(operation, baseMethodBinding);
 			}
 
 			// Instance VRead
@@ -550,7 +596,7 @@ public class OpenApiInterceptor {
 				operation.setSummary("vread-instance: Read " + resourceType + " instance with specific version");
 				addResourceIdParameter(operation);
 				addResourceVersionIdParameter(operation);
-				addFhirResourceResponse(ctx, openApi, operation, null);
+				addFhirResourceResponse(ctx, openApi, operation, resourceType);
 			}
 
 			// Type Create
@@ -639,6 +685,26 @@ public class OpenApiInterceptor {
 		return openApi;
 	}
 
+	private HashMap<String, HashMap<RestOperationTypeEnum, BaseMethodBinding>> buildOperationLookup(
+			RestfulServer restfulServer) {
+		final HashMap<String, HashMap<RestOperationTypeEnum, BaseMethodBinding>> map = new HashMap<>();
+		final Collection<ResourceBinding> resourceBindings = restfulServer.getResourceBindings();
+		for (ResourceBinding resourceBinding : resourceBindings) {
+			if (!map.containsKey(resourceBinding.getResourceName())) {
+				map.put(resourceBinding.getResourceName(), new HashMap<>());
+			}
+
+			final Map<RestOperationTypeEnum, BaseMethodBinding> resourceMap =
+					map.get(resourceBinding.getResourceName());
+
+			final List<BaseMethodBinding> methodBindings = resourceBinding.getMethodBindings();
+			for (BaseMethodBinding methodBinding : methodBindings) {
+				resourceMap.put(methodBinding.getRestOperationType(), methodBinding);
+			}
+		}
+		return map;
+	}
+
 	@Nonnull
 	protected String createResourceDescription(
 			CapabilityStatement.CapabilityStatementRestResourceComponent theResource) {
@@ -678,7 +744,7 @@ public class OpenApiInterceptor {
 		operation.addTagsItem(resourceType);
 		operation.setDescription("This is a search type");
 		operation.setSummary("search-type: Search for " + resourceType + " instances");
-		addFhirResourceResponse(ctx, openApi, operation, null);
+		addFhirResourceResponse(ctx, openApi, operation, "Bundle");
 
 		for (final CapabilityStatement.CapabilityStatementRestResourceSearchParamComponent nextSearchParam :
 				nextResource.getSearchParam()) {
@@ -723,6 +789,21 @@ public class OpenApiInterceptor {
 	}
 
 	private void ensureComponentsSchemasPopulated(OpenAPI theOpenApi) {
+		if (theOpenApi.getComponents() == null) {
+			theOpenApi.setComponents(new Components());
+		}
+		if (theOpenApi.getComponents().getSchemas() == null) {
+			theOpenApi.getComponents().setSchemas(new LinkedHashMap<>());
+		}
+	}
+
+	private void ensureResourceInSchema(OpenAPI theOpenApi, Class<? extends IBaseResource> clazz) {
+		clazz.getName();
+		if (!theOpenApi.getComponents().getSchemas().containsKey(FHIR_JSON_RESOURCE)) {
+			ObjectSchema fhirJsonSchema = new ObjectSchema();
+			fhirJsonSchema.setDescription("A FHIR resource");
+			theOpenApi.getComponents().addSchemas(FHIR_JSON_RESOURCE, fhirJsonSchema);
+		}
 		if (theOpenApi.getComponents() == null) {
 			theOpenApi.setComponents(new Components());
 		}
@@ -1087,6 +1168,16 @@ public class OpenApiInterceptor {
 				theOpenApi, theFhirContext, genericExampleSupplier(theFhirContext, theResourceType)));
 		theOperation.getResponses().addApiResponse("200", response200);
 	}
+
+	//	private void addFhirResourceResponse(
+	//		FhirContext theFhirContext, OpenAPI theOpenApi, Operation theOperation, Class<?> returnType) {
+	//		theOperation.setResponses(new ApiResponses());
+	//		ApiResponse response200 = new ApiResponse();
+	//		response200.setDescription("Success");
+	//		response200.setContent(provideContentFhirResource(
+	//			theOpenApi, theFhirContext, genericExampleSupplier(theFhirContext, theResourceType)));
+	//		theOperation.getResponses().addApiResponse("200", response200);
+	//	}
 
 	private Supplier<IBaseResource> genericExampleSupplier(FhirContext theFhirContext, String theResourceType) {
 		if (theResourceType == null) {

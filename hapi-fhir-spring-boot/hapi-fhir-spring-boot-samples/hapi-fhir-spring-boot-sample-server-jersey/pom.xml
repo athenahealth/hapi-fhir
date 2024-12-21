@@ -1,5 +1,5 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+			xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 
 	<parent>
@@ -12,6 +12,10 @@
 	<artifactId>hapi-fhir-spring-boot-sample-server-jersey</artifactId>
 
 	<packaging>jar</packaging>
+
+	<properties>
+		<org.springdoc.springdoc-openapi.version>2.0.2</org.springdoc.springdoc-openapi.version>
+	</properties>
 
 	<dependencies>
 		<!-- Compile -->
@@ -46,6 +50,22 @@
 			<groupId>ca.uhn.hapi.fhir</groupId>
 			<artifactId>hapi-fhir-structures-dstu3</artifactId>
 			<version>${project.version}</version>
+		</dependency>
+
+		<dependency>
+			<groupId>ca.uhn.hapi.fhir</groupId>
+			<artifactId>hapi-fhir-server-openapi</artifactId>
+			<version>${project.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.springdoc</groupId>
+			<artifactId>springdoc-openapi-starter-common</artifactId>
+			<version>${org.springdoc.springdoc-openapi.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.springdoc</groupId>
+			<artifactId>springdoc-openapi-starter-webmvc-ui</artifactId>
+			<version>${org.springdoc.springdoc-openapi.version}</version>
 		</dependency>
 		<!-- Optional -->
 		<dependency>

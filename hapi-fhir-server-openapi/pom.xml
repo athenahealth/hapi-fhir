@@ -10,6 +10,8 @@
 		<relativePath>../hapi-deployable-pom/pom.xml</relativePath>
 	</parent>
 
+	<version>7.7.21-SNAPSHOT</version>
+
 	<modelVersion>4.0.0</modelVersion>
 
 	<artifactId>hapi-fhir-server-openapi</artifactId>
@@ -19,17 +21,17 @@
 		<dependency>
 			<groupId>ca.uhn.hapi.fhir</groupId>
 			<artifactId>hapi-fhir-server</artifactId>
-			<version>${project.version}</version>
+			<version>${parent.version}</version>
 		</dependency>
 		<dependency>
 			<groupId>ca.uhn.hapi.fhir</groupId>
 			<artifactId>hapi-fhir-structures-r4</artifactId>
-			<version>${project.version}</version>
+			<version>${parent.version}</version>
 		</dependency>
 		<dependency>
 			<groupId>ca.uhn.hapi.fhir</groupId>
 			<artifactId>hapi-fhir-converter</artifactId>
-			<version>${project.version}</version>
+			<version>${parent.version}</version>
 		</dependency>
 
 		<!-- OpenAPI/Swagger -->
@@ -73,13 +75,13 @@
 		<dependency>
 			<groupId>ca.uhn.hapi.fhir</groupId>
 			<artifactId>hapi-fhir-test-utilities</artifactId>
-			<version>${project.version}</version>
+			<version>${parent.version}</version>
 			<scope>test</scope>
 		</dependency>
 		<dependency>
 			<groupId>ca.uhn.hapi.fhir</groupId>
 			<artifactId>hapi-fhir-structures-r5</artifactId>
-			<version>${project.version}</version>
+			<version>${parent.version}</version>
 			<scope>test</scope>
 		</dependency>
 		<dependency>
