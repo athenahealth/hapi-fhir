@@ -839,7 +839,7 @@ public class OpenApiInterceptor {
 	}
 
 	private void ensureResourceInSchema(OpenAPI theOpenApi, Class<? extends IBaseResource> clazz) {
-		clazz.getName();
+		// clazz.getName();
 		if (!theOpenApi.getComponents().getSchemas().containsKey(FHIR_JSON_RESOURCE)) {
 			ObjectSchema fhirJsonSchema = new ObjectSchema();
 			fhirJsonSchema.setDescription("A FHIR resource");
