@@ -41,6 +41,9 @@ import ca.uhn.fhir.util.UrlUtil;
 import com.google.common.collect.ImmutableList;
 import com.vladsch.flexmark.html.HtmlRenderer;
 import com.vladsch.flexmark.parser.Parser;
+import io.swagger.v3.core.converter.AnnotatedType;
+import io.swagger.v3.core.converter.ModelConverters;
+import io.swagger.v3.core.converter.ResolvedSchema;
 import io.swagger.v3.core.util.Yaml;
 import io.swagger.v3.oas.models.Components;
 import io.swagger.v3.oas.models.OpenAPI;
@@ -583,7 +586,7 @@ public class OpenApiInterceptor {
 				operation.addTagsItem(resourceType);
 				operation.setSummary("read-instance: Read " + resourceType + " instance");
 				addResourceIdParameter(operation);
-				addFhirResourceResponse(ctx, openApi, operation, "Appointment");
+				addFhirResourceResponse(openApi, operation, returnClass);
 
 				customizeOperation(operation, baseMethodBinding);
 			}
@@ -597,6 +600,10 @@ public class OpenApiInterceptor {
 				addResourceIdParameter(operation);
 				addResourceVersionIdParameter(operation);
 				addFhirResourceResponse(ctx, openApi, operation, resourceType);
+
+				final BaseMethodBinding baseMethodBinding =
+						operationLookup.get(resourceType).get(RestOperationTypeEnum.VREAD);
+				customizeOperation(operation, baseMethodBinding);
 			}
 
 			// Type Create
@@ -606,6 +613,10 @@ public class OpenApiInterceptor {
 				operation.setSummary("create-type: Create a new " + resourceType + " instance");
 				addFhirResourceRequestBody(openApi, operation, ctx, genericExampleSupplier(ctx, resourceType));
 				addFhirResourceResponse(ctx, openApi, operation, null);
+
+				final BaseMethodBinding baseMethodBinding =
+						operationLookup.get(resourceType).get(RestOperationTypeEnum.CREATE);
+				customizeOperation(operation, baseMethodBinding);
 			}
 
 			// Instance Update
@@ -617,6 +628,10 @@ public class OpenApiInterceptor {
 				addResourceIdParameter(operation);
 				addFhirResourceRequestBody(openApi, operation, ctx, genericExampleSupplier(ctx, resourceType));
 				addFhirResourceResponse(ctx, openApi, operation, null);
+
+				final BaseMethodBinding baseMethodBinding =
+						operationLookup.get(resourceType).get(RestOperationTypeEnum.UPDATE);
+				customizeOperation(operation, baseMethodBinding);
 			}
 
 			// Type history
@@ -626,10 +641,14 @@ public class OpenApiInterceptor {
 				operation.setSummary(
 						"type-history: Fetch the resource change history for all resources of type " + resourceType);
 				addFhirResourceResponse(ctx, openApi, operation, null);
+
+				final BaseMethodBinding baseMethodBinding =
+						operationLookup.get(resourceType).get(RestOperationTypeEnum.HISTORY_TYPE);
+				customizeOperation(operation, baseMethodBinding);
 			}
 
 			// Instance history
-			if (typeRestfulInteractions.contains(CapabilityStatement.TypeRestfulInteraction.HISTORYTYPE)) {
+			if (typeRestfulInteractions.contains(CapabilityStatement.TypeRestfulInteraction.HISTORYINSTANCE)) {
 				Operation operation =
 						getPathItem(paths, "/" + resourceType + "/{id}/_history", PathItem.HttpMethod.GET);
 				operation.addTagsItem(resourceType);
@@ -637,6 +656,10 @@ public class OpenApiInterceptor {
 						+ resourceType);
 				addResourceIdParameter(operation);
 				addFhirResourceResponse(ctx, openApi, operation, null);
+
+				final BaseMethodBinding baseMethodBinding =
+						operationLookup.get(resourceType).get(RestOperationTypeEnum.HISTORY_INSTANCE);
+				customizeOperation(operation, baseMethodBinding);
 			}
 
 			// Instance Patch
@@ -647,6 +670,10 @@ public class OpenApiInterceptor {
 				addResourceIdParameter(operation);
 				addFhirResourceRequestBody(openApi, operation, FHIR_CONTEXT_CANONICAL, patchExampleSupplier());
 				addFhirResourceResponse(ctx, openApi, operation, null);
+
+				final BaseMethodBinding baseMethodBinding =
+						operationLookup.get(resourceType).get(RestOperationTypeEnum.PATCH);
+				customizeOperation(operation, baseMethodBinding);
 			}
 
 			// Instance Delete
@@ -656,22 +683,32 @@ public class OpenApiInterceptor {
 				operation.setSummary("instance-delete: Perform a logical delete on a resource instance");
 				addResourceIdParameter(operation);
 				addFhirResourceResponse(ctx, openApi, operation, null);
+
+				final BaseMethodBinding baseMethodBinding =
+						operationLookup.get(resourceType).get(RestOperationTypeEnum.DELETE);
+				customizeOperation(operation, baseMethodBinding);
 			}
 
 			// Search
 			if (typeRestfulInteractions.contains(CapabilityStatement.TypeRestfulInteraction.SEARCHTYPE)) {
+
+				final BaseMethodBinding baseMethodBinding =
+						operationLookup.get(resourceType).get(RestOperationTypeEnum.SEARCH_TYPE);
+
 				addSearchOperation(
 						openApi,
 						getPathItem(paths, "/" + resourceType, PathItem.HttpMethod.GET),
 						ctx,
 						resourceType,
-						nextResource);
+						nextResource,
+						baseMethodBinding);
 				addSearchOperation(
 						openApi,
 						getPathItem(paths, "/" + resourceType + "/_search", PathItem.HttpMethod.GET),
 						ctx,
 						resourceType,
-						nextResource);
+						nextResource,
+						baseMethodBinding);
 			}
 
 			// Resource-level Operations
@@ -679,6 +716,7 @@ public class OpenApiInterceptor {
 					nextResource.getOperation()) {
 				addFhirOperation(
 						ctx, openApi, theRequestDetails, capabilitiesProvider, paths, resourceType, nextOperation);
+				// TODO: Customize operations
 			}
 		}
 
@@ -740,7 +778,8 @@ public class OpenApiInterceptor {
 			final Operation operation,
 			final FhirContext ctx,
 			final String resourceType,
-			final CapabilityStatement.CapabilityStatementRestResourceComponent nextResource) {
+			final CapabilityStatement.CapabilityStatementRestResourceComponent nextResource,
+			final BaseMethodBinding baseMethodBinding) {
 		operation.addTagsItem(resourceType);
 		operation.setDescription("This is a search type");
 		operation.setSummary("search-type: Search for " + resourceType + " instances");
@@ -757,6 +796,8 @@ public class OpenApiInterceptor {
 			parametersItem.setDescription(nextSearchParam.getDocumentation());
 			parametersItem.setSchema(toSchema(nextSearchParam.getType()));
 		}
+
+		customizeOperation(operation, baseMethodBinding);
 	}
 
 	private Supplier<IBaseResource> patchExampleSupplier() {
@@ -1169,15 +1210,13 @@ public class OpenApiInterceptor {
 		theOperation.getResponses().addApiResponse("200", response200);
 	}
 
-	//	private void addFhirResourceResponse(
-	//		FhirContext theFhirContext, OpenAPI theOpenApi, Operation theOperation, Class<?> returnType) {
-	//		theOperation.setResponses(new ApiResponses());
-	//		ApiResponse response200 = new ApiResponse();
-	//		response200.setDescription("Success");
-	//		response200.setContent(provideContentFhirResource(
-	//			theOpenApi, theFhirContext, genericExampleSupplier(theFhirContext, theResourceType)));
-	//		theOperation.getResponses().addApiResponse("200", response200);
-	//	}
+	private void addFhirResourceResponse(OpenAPI theOpenApi, Operation theOperation, Class<?> returnType) {
+		theOperation.setResponses(new ApiResponses());
+		ApiResponse response200 = new ApiResponse();
+		response200.setDescription("Success");
+		response200.setContent(provideContentFhirResource(theOpenApi, returnType));
+		theOperation.getResponses().addApiResponse("200", response200);
+	}
 
 	private Supplier<IBaseResource> genericExampleSupplier(FhirContext theFhirContext, String theResourceType) {
 		if (theResourceType == null) {
@@ -1190,6 +1229,37 @@ public class OpenApiInterceptor {
 			}
 			return example;
 		};
+	}
+
+	private Content provideContentFhirResource(OpenAPI theOpenApi, Class<?> clazz) {
+		addSchemaFhirResource(theOpenApi);
+		Content retVal = new Content();
+
+		ResolvedSchema schema = ModelConverters.getInstance().resolveAsResolvedSchema(new AnnotatedType(clazz));
+
+		MediaType jsonSchema = new MediaType().schema(schema.schema);
+
+		// if (theExampleSupplier != null) {
+		// 	jsonSchema.setExample(theExampleFhirContext
+		// 			.newJsonParser()
+		// 			.setPrettyPrint(true)
+		// 			.encodeResourceToString(theExampleSupplier.get()));
+		// }
+
+		retVal.addMediaType(Constants.CT_FHIR_JSON_NEW, jsonSchema);
+
+		ourLog.warn("testing {}", retVal);
+
+		// MediaType xmlSchema =
+		// 		new MediaType().schema(new ObjectSchema().$ref("#/components/schemas/" + FHIR_XML_RESOURCE));
+		// if (theExampleSupplier != null) {
+		// 	xmlSchema.setExample(theExampleFhirContext
+		// 			.newXmlParser()
+		// 			.setPrettyPrint(true)
+		// 			.encodeResourceToString(theExampleSupplier.get()));
+		// }
+		// retVal.addMediaType(Constants.CT_FHIR_XML_NEW, xmlSchema);
+		return retVal;
 	}
 
 	private Content provideContentFhirResource(
