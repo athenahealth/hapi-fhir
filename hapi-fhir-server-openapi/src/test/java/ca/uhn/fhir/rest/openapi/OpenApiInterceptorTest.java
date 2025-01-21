@@ -29,6 +29,7 @@ import ca.uhn.fhir.util.ExtensionConstants;
 import io.swagger.v3.core.util.Yaml;
 import io.swagger.v3.oas.models.OpenAPI;
 import io.swagger.v3.oas.models.PathItem;
+import io.swagger.v3.oas.models.media.MediaType;
 import jakarta.annotation.Nonnull;
 import jakarta.servlet.http.HttpServletRequest;
 import org.apache.commons.io.IOUtils;
@@ -43,6 +44,7 @@ import org.hl7.fhir.instance.model.api.IBaseReference;
 import org.hl7.fhir.instance.model.api.IBaseResource;
 import org.hl7.fhir.instance.model.api.IIdType;
 import org.hl7.fhir.instance.model.api.IPrimitiveType;
+import org.hl7.fhir.r4.model.Patient;
 import org.hl7.fhir.r5.model.ActorDefinition;
 import org.htmlunit.html.DomElement;
 import org.htmlunit.html.HtmlDivision;
@@ -221,7 +223,7 @@ public class OpenApiInterceptorTest {
 			try (CloseableHttpResponse response = myClient.execute(get)) {
 				resp = IOUtils.toString(response.getEntity().getContent(), StandardCharsets.UTF_8);
 				ourLog.info("Response: {}", response.getStatusLine());
-				ourLog.debug("Response: {}", resp);
+				ourLog.info("Response: {}", resp);
 			}
 
 			OpenAPI parsed = Yaml.mapper().readValue(resp, OpenAPI.class);
@@ -243,6 +245,10 @@ public class OpenApiInterceptorTest {
 			assertEquals("LastN Short", lastNPath.getGet().getSummary());
 			assertThat(lastNPath.getGet().getParameters()).hasSize(4);
 			assertEquals("Subject description", lastNPath.getGet().getParameters().get(0).getDescription());
+
+			final MediaType schema = parsed.getPaths().get("/Observation/{id}").getGet().getResponses().get("200").getContent().get(Constants.CT_FHIR_JSON_NEW);
+			ourLog.info("Schema: {}", schema);
+			assertNotNull(schema);
 		}
 
 		@Test

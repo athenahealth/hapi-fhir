@@ -1,0 +1,1205 @@
+{
+  "type": "object",
+  "properties": {
+    "id": {
+      "type": "string",
+      "description": "Logical id of this artifact"
+    },
+    "meta": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string",
+          "description": "Unique id for inter-element referencing"
+        },
+        "extension": {
+          "type": "array",
+          "items": {
+            "type": "object"
+          },
+          "description": "Additional content defined by implementations"
+        },
+        "versionId": {
+          "type": "string",
+          "description": "Version specific identifier"
+        },
+        "lastUpdated": {
+          "type": "string",
+          "description": "When the resource version last changed"
+        },
+        "source": {
+          "type": "string",
+          "description": "Identifies where the resource comes from"
+        },
+        "profile": {
+          "type": "string",
+          "description": "Profiles this resource claims to conform to"
+        },
+        "security": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "id": {
+                "type": "string",
+                "description": "Unique id for inter-element referencing"
+              },
+              "extension": {
+                "type": "array",
+                "items": {
+                  "type": "object"
+                },
+                "description": "Additional content defined by implementations"
+              },
+              "system": {
+                "type": "string",
+                "description": "Identity of the terminology system"
+              },
+              "version": {
+                "type": "string",
+                "description": "Version of the system - if relevant"
+              },
+              "code": {
+                "type": "string",
+                "description": "Symbol in syntax defined by the system"
+              },
+              "display": {
+                "type": "string",
+                "description": "Representation defined by the system"
+              },
+              "userSelected": {
+                "type": "boolean",
+                "description": "If this coding was chosen directly by the user"
+              }
+            }
+          },
+          "description": "Security Labels applied to this resource"
+        },
+        "tag": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "id": {
+                "type": "string",
+                "description": "Unique id for inter-element referencing"
+              },
+              "extension": {
+                "type": "array",
+                "items": {
+                  "type": "object"
+                },
+                "description": "Additional content defined by implementations"
+              },
+              "system": {
+                "type": "string",
+                "description": "Identity of the terminology system"
+              },
+              "version": {
+                "type": "string",
+                "description": "Version of the system - if relevant"
+              },
+              "code": {
+                "type": "string",
+                "description": "Symbol in syntax defined by the system"
+              },
+              "display": {
+                "type": "string",
+                "description": "Representation defined by the system"
+              },
+              "userSelected": {
+                "type": "boolean",
+                "description": "If this coding was chosen directly by the user"
+              }
+            }
+          },
+          "description": "Tags applied to this resource"
+        }
+      },
+      "description": "Metadata about the resource"
+    },
+    "implicitRules": {
+      "type": "string",
+      "description": "A set of rules under which this content was created"
+    },
+    "language": {
+      "type": "string",
+      "description": "Language of the resource content"
+    },
+    "text": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string",
+          "description": "Unique id for inter-element referencing"
+        },
+        "extension": {
+          "type": "array",
+          "items": {
+            "type": "object"
+          },
+          "description": "Additional content defined by implementations"
+        },
+        "status": {
+          "type": "string",
+          "description": "generated | extensions | additional | empty"
+        },
+        "div": {
+          "type": "string",
+          "description": "Limited xhtml content"
+        }
+      },
+      "description": "Text summary of the resource, for human interpretation"
+    },
+    "contained": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "description": "Logical id of this artifact"
+          },
+          "meta": {
+            "type": "object",
+            "properties": {
+              "id": {
+                "type": "string",
+                "description": "Unique id for inter-element referencing"
+              },
+              "extension": {
+                "type": "array",
+                "items": {
+                  "type": "object"
+                },
+                "description": "Additional content defined by implementations"
+              },
+              "versionId": {
+                "type": "string",
+                "description": "Version specific identifier"
+              },
+              "lastUpdated": {
+                "type": "string",
+                "description": "When the resource version last changed"
+              },
+              "source": {
+                "type": "string",
+                "description": "Identifies where the resource comes from"
+              },
+              "profile": {
+                "type": "string",
+                "description": "Profiles this resource claims to conform to"
+              },
+              "security": {
+                "type": "array",
+                "items": {
+                  "type": "object",
+                  "properties": {
+                    "id": {
+                      "type": "string",
+                      "description": "Unique id for inter-element referencing"
+                    },
+                    "extension": {
+                      "type": "array",
+                      "items": {
+                        "type": "object"
+                      },
+                      "description": "Additional content defined by implementations"
+                    },
+                    "system": {
+                      "type": "string",
+                      "description": "Identity of the terminology system"
+                    },
+                    "version": {
+                      "type": "string",
+                      "description": "Version of the system - if relevant"
+                    },
+                    "code": {
+                      "type": "string",
+                      "description": "Symbol in syntax defined by the system"
+                    },
+                    "display": {
+                      "type": "string",
+                      "description": "Representation defined by the system"
+                    },
+                    "userSelected": {
+                      "type": "boolean",
+                      "description": "If this coding was chosen directly by the user"
+                    }
+                  }
+                },
+                "description": "Security Labels applied to this resource"
+              },
+              "tag": {
+                "type": "array",
+                "items": {
+                  "type": "object",
+                  "properties": {
+                    "id": {
+                      "type": "string",
+                      "description": "Unique id for inter-element referencing"
+                    },
+                    "extension": {
+                      "type": "array",
+                      "items": {
+                        "type": "object"
+                      },
+                      "description": "Additional content defined by implementations"
+                    },
+                    "system": {
+                      "type": "string",
+                      "description": "Identity of the terminology system"
+                    },
+                    "version": {
+                      "type": "string",
+                      "description": "Version of the system - if relevant"
+                    },
+                    "code": {
+                      "type": "string",
+                      "description": "Symbol in syntax defined by the system"
+                    },
+                    "display": {
+                      "type": "string",
+                      "description": "Representation defined by the system"
+                    },
+                    "userSelected": {
+                      "type": "boolean",
+                      "description": "If this coding was chosen directly by the user"
+                    }
+                  }
+                },
+                "description": "Tags applied to this resource"
+              }
+            },
+            "description": "Metadata about the resource"
+          },
+          "implicitRules": {
+            "type": "string",
+            "description": "A set of rules under which this content was created"
+          },
+          "language": {
+            "type": "string",
+            "description": "Language of the resource content"
+          }
+        }
+      },
+      "description": "Contained, inline Resources"
+    },
+    "extension": {
+      "type": "array",
+      "items": {
+        "type": "object"
+      },
+      "description": "Additional content defined by implementations"
+    },
+    "modifierExtension": {
+      "type": "array",
+      "items": {
+        "type": "object"
+      },
+      "description": "Extensions that cannot be ignored"
+    },
+    "identifier": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "description": "Unique id for inter-element referencing"
+          },
+          "extension": {
+            "type": "array",
+            "items": {
+              "type": "object"
+            },
+            "description": "Additional content defined by implementations"
+          },
+          "use": {
+            "type": "string",
+            "description": "usual | official | temp | secondary | old (If known)"
+          },
+          "type": {
+            "type": "object",
+            "properties": {
+              "id": {
+                "type": "string",
+                "description": "Unique id for inter-element referencing"
+              },
+              "extension": {
+                "type": "array",
+                "items": {
+                  "type": "object"
+                },
+                "description": "Additional content defined by implementations"
+              },
+              "coding": {
+                "type": "array",
+                "items": {
+                  "type": "object",
+                  "properties": {
+                    "id": {
+                      "type": "string",
+                      "description": "Unique id for inter-element referencing"
+                    },
+                    "extension": {
+                      "type": "array",
+                      "items": {
+                        "type": "object"
+                      },
+                      "description": "Additional content defined by implementations"
+                    },
+                    "system": {
+                      "type": "string",
+                      "description": "Identity of the terminology system"
+                    },
+                    "version": {
+                      "type": "string",
+                      "description": "Version of the system - if relevant"
+                    },
+                    "code": {
+                      "type": "string",
+                      "description": "Symbol in syntax defined by the system"
+                    },
+                    "display": {
+                      "type": "string",
+                      "description": "Representation defined by the system"
+                    },
+                    "userSelected": {
+                      "type": "boolean",
+                      "description": "If this coding was chosen directly by the user"
+                    }
+                  }
+                },
+                "description": "Code defined by a terminology system"
+              },
+              "text": {
+                "type": "string",
+                "description": "Plain text representation of the concept"
+              }
+            },
+            "description": "Description of identifier"
+          },
+          "system": {
+            "type": "string",
+            "description": "The namespace for the identifier value"
+          },
+          "value": {
+            "type": "string",
+            "description": "The value that is unique"
+          },
+          "period": {
+            "type": "object",
+            "properties": {
+              "id": {
+                "type": "string",
+                "description": "Unique id for inter-element referencing"
+              },
+              "extension": {
+                "type": "array",
+                "items": {
+                  "type": "object"
+                },
+                "description": "Additional content defined by implementations"
+              },
+              "start": {
+                "type": "string",
+                "description": "Starting time with inclusive boundary"
+              },
+              "end": {
+                "type": "string",
+                "description": "End time with inclusive boundary, if not ongoing"
+              }
+            },
+            "description": "Time period when id is/was valid for use"
+          },
+          "assigner": {
+            "type": "object",
+            "properties": {
+              "id": {
+                "type": "string",
+                "description": "Unique id for inter-element referencing"
+              },
+              "extension": {
+                "type": "array",
+                "items": {
+                  "type": "object"
+                },
+                "description": "Additional content defined by implementations"
+              },
+              "reference": {
+                "type": "string",
+                "description": "Literal reference, Relative, internal or absolute URL"
+              },
+              "type": {
+                "type": "string",
+                "description": "Type the reference refers to (e.g. \"Patient\")"
+              },
+              "identifier": {
+                "type": "object",
+                "description": "Logical reference, when literal reference is not known"
+              },
+              "display": {
+                "type": "string",
+                "description": "Text alternative for the resource"
+              }
+            },
+            "description": "Organization that issued id (may be just text)"
+          }
+        }
+      },
+      "description": "External Ids for this item"
+    },
+    "status": {
+      "type": "string",
+      "description": "proposed | pending | booked | arrived | fulfilled | cancelled | noshow | entered-in-error | checked-in | waitlist"
+    },
+    "cancelationReason": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string",
+          "description": "Unique id for inter-element referencing"
+        },
+        "extension": {
+          "type": "array",
+          "items": {
+            "type": "object"
+          },
+          "description": "Additional content defined by implementations"
+        },
+        "coding": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "id": {
+                "type": "string",
+                "description": "Unique id for inter-element referencing"
+              },
+              "extension": {
+                "type": "array",
+                "items": {
+                  "type": "object"
+                },
+                "description": "Additional content defined by implementations"
+              },
+              "system": {
+                "type": "string",
+                "description": "Identity of the terminology system"
+              },
+              "version": {
+                "type": "string",
+                "description": "Version of the system - if relevant"
+              },
+              "code": {
+                "type": "string",
+                "description": "Symbol in syntax defined by the system"
+              },
+              "display": {
+                "type": "string",
+                "description": "Representation defined by the system"
+              },
+              "userSelected": {
+                "type": "boolean",
+                "description": "If this coding was chosen directly by the user"
+              }
+            }
+          },
+          "description": "Code defined by a terminology system"
+        },
+        "text": {
+          "type": "string",
+          "description": "Plain text representation of the concept"
+        }
+      },
+      "description": "The coded reason for the appointment being cancelled"
+    },
+    "serviceCategory": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "description": "Unique id for inter-element referencing"
+          },
+          "extension": {
+            "type": "array",
+            "items": {
+              "type": "object"
+            },
+            "description": "Additional content defined by implementations"
+          },
+          "coding": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "id": {
+                  "type": "string",
+                  "description": "Unique id for inter-element referencing"
+                },
+                "extension": {
+                  "type": "array",
+                  "items": {
+                    "type": "object"
+                  },
+                  "description": "Additional content defined by implementations"
+                },
+                "system": {
+                  "type": "string",
+                  "description": "Identity of the terminology system"
+                },
+                "version": {
+                  "type": "string",
+                  "description": "Version of the system - if relevant"
+                },
+                "code": {
+                  "type": "string",
+                  "description": "Symbol in syntax defined by the system"
+                },
+                "display": {
+                  "type": "string",
+                  "description": "Representation defined by the system"
+                },
+                "userSelected": {
+                  "type": "boolean",
+                  "description": "If this coding was chosen directly by the user"
+                }
+              }
+            },
+            "description": "Code defined by a terminology system"
+          },
+          "text": {
+            "type": "string",
+            "description": "Plain text representation of the concept"
+          }
+        }
+      },
+      "description": "A broad categorization of the service that is to be performed during this appointment"
+    },
+    "serviceType": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "description": "Unique id for inter-element referencing"
+          },
+          "extension": {
+            "type": "array",
+            "items": {
+              "type": "object"
+            },
+            "description": "Additional content defined by implementations"
+          },
+          "coding": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "id": {
+                  "type": "string",
+                  "description": "Unique id for inter-element referencing"
+                },
+                "extension": {
+                  "type": "array",
+                  "items": {
+                    "type": "object"
+                  },
+                  "description": "Additional content defined by implementations"
+                },
+                "system": {
+                  "type": "string",
+                  "description": "Identity of the terminology system"
+                },
+                "version": {
+                  "type": "string",
+                  "description": "Version of the system - if relevant"
+                },
+                "code": {
+                  "type": "string",
+                  "description": "Symbol in syntax defined by the system"
+                },
+                "display": {
+                  "type": "string",
+                  "description": "Representation defined by the system"
+                },
+                "userSelected": {
+                  "type": "boolean",
+                  "description": "If this coding was chosen directly by the user"
+                }
+              }
+            },
+            "description": "Code defined by a terminology system"
+          },
+          "text": {
+            "type": "string",
+            "description": "Plain text representation of the concept"
+          }
+        }
+      },
+      "description": "The specific service that is to be performed during this appointment"
+    },
+    "specialty": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "description": "Unique id for inter-element referencing"
+          },
+          "extension": {
+            "type": "array",
+            "items": {
+              "type": "object"
+            },
+            "description": "Additional content defined by implementations"
+          },
+          "coding": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "id": {
+                  "type": "string",
+                  "description": "Unique id for inter-element referencing"
+                },
+                "extension": {
+                  "type": "array",
+                  "items": {
+                    "type": "object"
+                  },
+                  "description": "Additional content defined by implementations"
+                },
+                "system": {
+                  "type": "string",
+                  "description": "Identity of the terminology system"
+                },
+                "version": {
+                  "type": "string",
+                  "description": "Version of the system - if relevant"
+                },
+                "code": {
+                  "type": "string",
+                  "description": "Symbol in syntax defined by the system"
+                },
+                "display": {
+                  "type": "string",
+                  "description": "Representation defined by the system"
+                },
+                "userSelected": {
+                  "type": "boolean",
+                  "description": "If this coding was chosen directly by the user"
+                }
+              }
+            },
+            "description": "Code defined by a terminology system"
+          },
+          "text": {
+            "type": "string",
+            "description": "Plain text representation of the concept"
+          }
+        }
+      },
+      "description": "The specialty of a practitioner that would be required to perform the service requested in this appointment"
+    },
+    "appointmentType": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string",
+          "description": "Unique id for inter-element referencing"
+        },
+        "extension": {
+          "type": "array",
+          "items": {
+            "type": "object"
+          },
+          "description": "Additional content defined by implementations"
+        },
+        "coding": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "id": {
+                "type": "string",
+                "description": "Unique id for inter-element referencing"
+              },
+              "extension": {
+                "type": "array",
+                "items": {
+                  "type": "object"
+                },
+                "description": "Additional content defined by implementations"
+              },
+              "system": {
+                "type": "string",
+                "description": "Identity of the terminology system"
+              },
+              "version": {
+                "type": "string",
+                "description": "Version of the system - if relevant"
+              },
+              "code": {
+                "type": "string",
+                "description": "Symbol in syntax defined by the system"
+              },
+              "display": {
+                "type": "string",
+                "description": "Representation defined by the system"
+              },
+              "userSelected": {
+                "type": "boolean",
+                "description": "If this coding was chosen directly by the user"
+              }
+            }
+          },
+          "description": "Code defined by a terminology system"
+        },
+        "text": {
+          "type": "string",
+          "description": "Plain text representation of the concept"
+        }
+      },
+      "description": "The style of appointment or patient that has been booked in the slot (not service type)"
+    },
+    "reasonCode": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "description": "Unique id for inter-element referencing"
+          },
+          "extension": {
+            "type": "array",
+            "items": {
+              "type": "object"
+            },
+            "description": "Additional content defined by implementations"
+          },
+          "coding": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "id": {
+                  "type": "string",
+                  "description": "Unique id for inter-element referencing"
+                },
+                "extension": {
+                  "type": "array",
+                  "items": {
+                    "type": "object"
+                  },
+                  "description": "Additional content defined by implementations"
+                },
+                "system": {
+                  "type": "string",
+                  "description": "Identity of the terminology system"
+                },
+                "version": {
+                  "type": "string",
+                  "description": "Version of the system - if relevant"
+                },
+                "code": {
+                  "type": "string",
+                  "description": "Symbol in syntax defined by the system"
+                },
+                "display": {
+                  "type": "string",
+                  "description": "Representation defined by the system"
+                },
+                "userSelected": {
+                  "type": "boolean",
+                  "description": "If this coding was chosen directly by the user"
+                }
+              }
+            },
+            "description": "Code defined by a terminology system"
+          },
+          "text": {
+            "type": "string",
+            "description": "Plain text representation of the concept"
+          }
+        }
+      },
+      "description": "Coded reason this appointment is scheduled"
+    },
+    "reasonReference": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "description": "Unique id for inter-element referencing"
+          },
+          "extension": {
+            "type": "array",
+            "items": {
+              "type": "object"
+            },
+            "description": "Additional content defined by implementations"
+          },
+          "reference": {
+            "type": "string",
+            "description": "Literal reference, Relative, internal or absolute URL"
+          },
+          "type": {
+            "type": "string",
+            "description": "Type the reference refers to (e.g. \"Patient\")"
+          },
+          "display": {
+            "type": "string",
+            "description": "Text alternative for the resource"
+          }
+        }
+      },
+      "properties": {
+        "identifier": {
+          "type": "object",
+          "description": "Logical reference, when literal reference is not known"
+        }
+      },
+      "description": "Reason the appointment is to take place (resource)"
+    },
+    "priority": {
+      "type": "integer",
+      "description": "Used to make informed decisions if needing to re-prioritize",
+      "format": "int32"
+    },
+    "description": {
+      "type": "string",
+      "description": "Shown on a subject line in a meeting request, or appointment list"
+    },
+    "supportingInformation": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "description": "Unique id for inter-element referencing"
+          },
+          "extension": {
+            "type": "array",
+            "items": {
+              "type": "object"
+            },
+            "description": "Additional content defined by implementations"
+          },
+          "reference": {
+            "type": "string",
+            "description": "Literal reference, Relative, internal or absolute URL"
+          },
+          "type": {
+            "type": "string",
+            "description": "Type the reference refers to (e.g. \"Patient\")"
+          },
+          "display": {
+            "type": "string",
+            "description": "Text alternative for the resource"
+          }
+        }
+      },
+      "properties": {
+        "identifier": {
+          "type": "object",
+          "description": "Logical reference, when literal reference is not known"
+        }
+      },
+      "description": "Additional information to support the appointment"
+    },
+    "start": {
+      "type": "string",
+      "description": "When appointment is to take place"
+    },
+    "end": {
+      "type": "string",
+      "description": "When appointment is to conclude"
+    },
+    "minutesDuration": {
+      "type": "integer",
+      "description": "Can be less than start/end (e.g. estimate)",
+      "format": "int32"
+    },
+    "slot": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "description": "Unique id for inter-element referencing"
+          },
+          "extension": {
+            "type": "array",
+            "items": {
+              "type": "object"
+            },
+            "description": "Additional content defined by implementations"
+          },
+          "reference": {
+            "type": "string",
+            "description": "Literal reference, Relative, internal or absolute URL"
+          },
+          "type": {
+            "type": "string",
+            "description": "Type the reference refers to (e.g. \"Patient\")"
+          },
+          "display": {
+            "type": "string",
+            "description": "Text alternative for the resource"
+          }
+        }
+      },
+      "properties": {
+        "identifier": {
+          "type": "object",
+          "description": "Logical reference, when literal reference is not known"
+        }
+      },
+      "description": "The slots that this appointment is filling"
+    },
+    "created": {
+      "type": "string",
+      "description": "The date that this appointment was initially created"
+    },
+    "comment": {
+      "type": "string",
+      "description": "Additional comments"
+    },
+    "patientInstruction": {
+      "type": "string",
+      "description": "Detailed information and instructions for the patient"
+    },
+    "basedOn": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "description": "Unique id for inter-element referencing"
+          },
+          "extension": {
+            "type": "array",
+            "items": {
+              "type": "object"
+            },
+            "description": "Additional content defined by implementations"
+          },
+          "reference": {
+            "type": "string",
+            "description": "Literal reference, Relative, internal or absolute URL"
+          },
+          "type": {
+            "type": "string",
+            "description": "Type the reference refers to (e.g. \"Patient\")"
+          },
+          "display": {
+            "type": "string",
+            "description": "Text alternative for the resource"
+          }
+        }
+      },
+      "properties": {
+        "identifier": {
+          "type": "object",
+          "description": "Logical reference, when literal reference is not known"
+        }
+      },
+      "description": "The service request this appointment is allocated to assess"
+    },
+    "participant": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string",
+          "description": "Unique id for inter-element referencing"
+        },
+        "extension": {
+          "type": "array",
+          "items": {
+            "type": "object"
+          },
+          "description": "Additional content defined by implementations"
+        },
+        "modifierExtension": {
+          "type": "array",
+          "items": {
+            "type": "object"
+          },
+          "description": "Extensions that cannot be ignored even if unrecognized"
+        },
+        "type": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "id": {
+                "type": "string",
+                "description": "Unique id for inter-element referencing"
+              },
+              "extension": {
+                "type": "array",
+                "items": {
+                  "type": "object"
+                },
+                "description": "Additional content defined by implementations"
+              },
+              "coding": {
+                "type": "array",
+                "items": {
+                  "type": "object",
+                  "properties": {
+                    "id": {
+                      "type": "string",
+                      "description": "Unique id for inter-element referencing"
+                    },
+                    "extension": {
+                      "type": "array",
+                      "items": {
+                        "type": "object"
+                      },
+                      "description": "Additional content defined by implementations"
+                    },
+                    "system": {
+                      "type": "string",
+                      "description": "Identity of the terminology system"
+                    },
+                    "version": {
+                      "type": "string",
+                      "description": "Version of the system - if relevant"
+                    },
+                    "code": {
+                      "type": "string",
+                      "description": "Symbol in syntax defined by the system"
+                    },
+                    "display": {
+                      "type": "string",
+                      "description": "Representation defined by the system"
+                    },
+                    "userSelected": {
+                      "type": "boolean",
+                      "description": "If this coding was chosen directly by the user"
+                    }
+                  }
+                },
+                "description": "Code defined by a terminology system"
+              },
+              "text": {
+                "type": "string",
+                "description": "Plain text representation of the concept"
+              }
+            }
+          },
+          "description": "Role of participant in the appointment"
+        },
+        "actor": {
+          "type": "object",
+          "properties": {
+            "id": {
+              "type": "string",
+              "description": "Unique id for inter-element referencing"
+            },
+            "extension": {
+              "type": "array",
+              "items": {
+                "type": "object"
+              },
+              "description": "Additional content defined by implementations"
+            },
+            "reference": {
+              "type": "string",
+              "description": "Literal reference, Relative, internal or absolute URL"
+            },
+            "type": {
+              "type": "string",
+              "description": "Type the reference refers to (e.g. \"Patient\")"
+            },
+            "identifier": {
+              "type": "object",
+              "description": "Logical reference, when literal reference is not known"
+            },
+            "display": {
+              "type": "string",
+              "description": "Text alternative for the resource"
+            }
+          },
+          "description": "Person, Location/HealthcareService or Device"
+        },
+        "required": {
+          "type": "string",
+          "description": "required | optional | information-only"
+        },
+        "status": {
+          "type": "string",
+          "description": "accepted | declined | tentative | needs-action"
+        },
+        "period": {
+          "type": "object",
+          "properties": {
+            "id": {
+              "type": "string",
+              "description": "Unique id for inter-element referencing"
+            },
+            "extension": {
+              "type": "array",
+              "items": {
+                "type": "object"
+              },
+              "description": "Additional content defined by implementations"
+            },
+            "start": {
+              "type": "string",
+              "description": "Starting time with inclusive boundary"
+            },
+            "end": {
+              "type": "string",
+              "description": "End time with inclusive boundary, if not ongoing"
+            }
+          },
+          "description": "Participation period of the actor"
+        }
+      },
+      "description": "Participants involved in appointment"
+    },
+    "requestedPeriod": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "description": "Unique id for inter-element referencing"
+          },
+          "extension": {
+            "type": "array",
+            "items": {
+              "type": "object"
+            },
+            "description": "Additional content defined by implementations"
+          },
+          "start": {
+            "type": "string",
+            "description": "Starting time with inclusive boundary"
+          },
+          "end": {
+            "type": "string",
+            "description": "End time with inclusive boundary, if not ongoing"
+          }
+        }
+      },
+      "description": "Potential date/time interval(s) requested to allocate the appointment within"
+    }
+  },
+  "description": "A booking of a healthcare event among patient(s), practitioner(s), related person(s) and/or device(s) for a specific date/time. This may result in one or more Encounter(s)"
+}

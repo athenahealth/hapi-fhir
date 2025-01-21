@@ -32,7 +32,6 @@ import ca.uhn.fhir.rest.server.IServerConformanceProvider;
 import ca.uhn.fhir.rest.server.ResourceBinding;
 import ca.uhn.fhir.rest.server.RestfulServer;
 import ca.uhn.fhir.rest.server.RestfulServerUtils;
-import ca.uhn.fhir.rest.server.exceptions.InternalErrorException;
 import ca.uhn.fhir.rest.server.method.BaseMethodBinding;
 import ca.uhn.fhir.rest.server.method.ReadMethodBinding;
 import ca.uhn.fhir.rest.server.servlet.ServletRequestDetails;
@@ -125,10 +124,8 @@ import org.thymeleaf.templateresource.ClassLoaderTemplateResource;
 import org.thymeleaf.web.servlet.IServletWebExchange;
 import org.thymeleaf.web.servlet.JakartaServletWebApplication;
 
-import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.InputStreamReader;
 import java.math.BigDecimal;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
@@ -150,8 +147,8 @@ import static org.apache.commons.lang3.StringUtils.defaultString;
 import static org.apache.commons.lang3.StringUtils.isBlank;
 import static org.apache.commons.lang3.StringUtils.isNotBlank;
 
-public class OpenApiInterceptor {
-	private static final Logger ourLog = LoggerFactory.getLogger(OpenApiInterceptor.class);
+public class JsonSchemaConverter {
+	private static final Logger ourLog = LoggerFactory.getLogger(JsonSchemaConverter.class);
 
 	public static final String FHIR_JSON_RESOURCE = "FHIR-JSON-RESOURCE";
 	public static final String FHIR_XML_RESOURCE = "FHIR-XML-RESOURCE";
@@ -173,7 +170,7 @@ public class OpenApiInterceptor {
 	/**
 	 * Constructor
 	 */
-	public OpenApiInterceptor() {
+	public JsonSchemaConverter() {
 		mySwaggerUiVersion = initSwaggerUiWebJar();
 
 		myTemplateEngine = new TemplateEngine();
@@ -604,19 +601,8 @@ public class OpenApiInterceptor {
 				operation.addTagsItem(resourceType);
 				operation.setSummary("read-instance: Read " + resourceType + " instance");
 				addResourceIdParameter(operation);
-
-				// idk
 				// addFhirResourceResponse(openApi, operation, resourceType);
-
-				// most attempts
-				// addFhirResourceResponse(openApi, operation, returnClass);
-
-				// addFhirResourceResponse(ctx, openApi, operation, returnClass);
-
-				// latest attempt
-				addFhirResourceResponse2(ctx, openApi, operation, RestOperationTypeEnum.READ, resourceType);
-
-				// original
+				addFhirResourceResponse(openApi, operation, returnClass);
 				// addFhirResourceResponse(ctx, openApi, operation, resourceType);
 
 				customizeOperation(operation, baseMethodBinding);
@@ -1067,8 +1053,7 @@ public class OpenApiInterceptor {
 		addFhirResourceResponse(theFhirContext, theOpenApi, theOperation, null);
 		if (httpMethod == PathItem.HttpMethod.GET) {
 
-			for (OperationDefinition.OperationDefinitionParameterComponent nextParameter :
-					theOperationDefinition.getParameter()) {
+			for (OperationDefinitionParameterComponent nextParameter : theOperationDefinition.getParameter()) {
 				if ("0".equals(nextParameter.getMax())
 						|| !nextParameter.getUse().equals(OperationParameterUse.IN)) {
 					continue;
@@ -1101,8 +1086,7 @@ public class OpenApiInterceptor {
 		} else {
 
 			Parameters exampleRequestBody = new Parameters();
-			for (OperationDefinition.OperationDefinitionParameterComponent nextSearchParam :
-					theOperationDefinition.getParameter()) {
+			for (OperationDefinitionParameterComponent nextSearchParam : theOperationDefinition.getParameter()) {
 				if ("0".equals(nextSearchParam.getMax())
 						|| !nextSearchParam.getUse().equals(OperationParameterUse.IN)) {
 					continue;
@@ -1249,20 +1233,6 @@ public class OpenApiInterceptor {
 		theOperation.getResponses().addApiResponse("200", response200);
 	}
 
-	private void addFhirResourceResponse2(
-			FhirContext theFhirContext,
-			OpenAPI theOpenApi,
-			Operation theOperation,
-			RestOperationTypeEnum operationType,
-			String resourceType) {
-		theOperation.setResponses(new ApiResponses());
-		ApiResponse response200 = new ApiResponse();
-		response200.setDescription("Success");
-		response200.setContent(
-				provideContentFhirResource(theOpenApi, theFhirContext, theOperation, operationType, resourceType));
-		theOperation.getResponses().addApiResponse("200", response200);
-	}
-
 	private void addFhirResourceResponse(OpenAPI theOpenApi, Operation theOperation, Class<?> returnType) {
 		theOperation.setResponses(new ApiResponses());
 		ApiResponse response200 = new ApiResponse();
@@ -1338,14 +1308,13 @@ public class OpenApiInterceptor {
 				JsonSchema schema = visitor.finalSchema();
 				final String jsonSchemaString =
 						mapper.writerWithDefaultPrettyPrinter().writeValueAsString(schema);
-				ourLog.warn("schema!! {}", jsonSchemaString);
-				final io.swagger.v3.oas.models.media.JsonSchema schema1 =
-						mapper.readValue(jsonSchemaString, io.swagger.v3.oas.models.media.JsonSchema.class);
-				MediaType jsonSchema = new MediaType().schema(schema1);
+				ourLog.trace("schema!! {}", jsonSchemaString);
+				final ResolvedSchema schema1 = mapper.readValue(jsonSchemaString, ResolvedSchema.class);
+				MediaType jsonSchema = new MediaType().schema(schema1.schema);
 
 				// retVal.addMediaType(Constants.CT_FHIR_JSON_NEW, );
 
-				ourLog.warn("testing class: {}, retVal: {}", clazz, jsonSchema);
+				ourLog.trace("testing class: {}, retVal: {}", clazz, jsonSchema);
 				// MediaType jsonSchema =
 				// 		new MediaType().schema(new ObjectSchema().$ref("#/components/schemas/" + FHIR_JSON_RESOURCE));
 				retVal.addMediaType(Constants.CT_FHIR_JSON_NEW, jsonSchema);
@@ -1383,7 +1352,7 @@ public class OpenApiInterceptor {
 				ourLog.warn("testing class: {}, retVal: {}", clazz, mediaType);
 				retVal.addMediaType(Constants.CT_FHIR_JSON_NEW, mediaType);
 			} else {
-				//
+
 			}
 			// final Field[] declaredFields = clazz.getDeclaredFields();
 			// for (Field field : declaredFields) {
@@ -1484,39 +1453,6 @@ public class OpenApiInterceptor {
 		return retVal;
 	}
 
-	// here nloyer
-	private Content provideContentFhirResource(
-			OpenAPI theOpenApi,
-			FhirContext theExampleFhirContext,
-			Operation theOperation,
-			RestOperationTypeEnum operationType,
-			String returnType) {
-		Content retVal = new Content();
-		try (InputStream predefinedSchema = ClasspathUtil.loadResourceAsStream("/ca/uhn/fhir/rest/openapi/schema/"
-				+ returnType + "-" + operationType.getCode() + "-response.schema.json")) {
-			final String schemaString = new BufferedReader(new InputStreamReader(predefinedSchema))
-					.lines()
-					.collect(Collectors.joining("\n"));
-
-			ourLog.warn("schema!! {}", schemaString);
-
-			ObjectMapper mapper = new ObjectMapper();
-
-			final io.swagger.v3.oas.models.media.JsonSchema jsonSchema =
-					mapper.readValue(schemaString, io.swagger.v3.oas.models.media.JsonSchema.class);
-
-			MediaType mediaType = new MediaType().schema(jsonSchema);
-			retVal.addMediaType(Constants.CT_FHIR_JSON_NEW, mediaType);
-		} catch (IOException e) {
-			ourLog.warn("error with openapi schema", e);
-		} catch (InternalErrorException e) {
-			ourLog.warn("Had an issue loading schema file, probably does not exist", e);
-			// fall back to original implementation
-			return provideContentFhirResource(theOpenApi, theExampleFhirContext, null);
-		}
-		return retVal;
-	}
-
 	private void addResourceIdParameter(Operation theOperation) {
 		Parameter parameter = new Parameter();
 		parameter.setName("id");
@@ -1538,7 +1474,7 @@ public class OpenApiInterceptor {
 		return myBannerImage;
 	}
 
-	public OpenApiInterceptor setBannerImage(String theBannerImage) {
+	public JsonSchemaConverter setBannerImage(String theBannerImage) {
 		myBannerImage = StringUtils.defaultIfBlank(theBannerImage, null);
 		return this;
 	}
